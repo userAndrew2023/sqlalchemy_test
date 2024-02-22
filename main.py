@@ -8,7 +8,7 @@ app.config['SECRET_KEY'] = 'key'
 
 @app.route('/')
 def index():
-    return 'фиг', 403
+    return 'Доступ закрыт', 403
 
 
 if __name__ == '__main__':
