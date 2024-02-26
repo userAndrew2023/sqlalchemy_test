@@ -1,27 +1,39 @@
-from flask import Flask
+from flask import Flask, render_template
 from data import db_session
-from data.users import User
+from data.jobs import Jobs
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'key'
 
 
 @app.route('/')
-def index():
-    return 'Доступ закрыт', 403
+def table():
+    db_s = db_session.create_session()
+    data = []
+    for i in db_s.query(Jobs):
+        data.append(
+            {
+                'id': i.id,
+                'name': i.job,
+                'team_leader': i.team_leader,
+                'duration': f'{i.work_size} hours',
+                'collaborators': i.collaborators,
+                'is_finished': 'yes' if i.is_finished else 'no'
+            }
+        )
+    return render_template('table.html', data=data)
 
 
 if __name__ == '__main__':
-    db_session.global_init("./db/init.db")
-    user = User()
-    user.surname = "Scott"
-    user.name = "Ridley"
-    user.age = 21
-    user.position = "captain"
-    user.speciality = "research engineer"
-    user.address = "module_1"
-    user.email = "scott_chief@mars.org"
-    db_sess = db_session.create_session()
-    db_sess.add(user)
-    db_sess.commit()
+    db_session.global_init('db/init.db')
+    job = Jobs()
+    job.job = 'бот для шадрина'
+    job.collaborators = 'Андрей'
+    job.work_size = '15'
+    job.is_finished = False
+    job.team_leader = 'Женя'
+    sess = db_session.create_session()
+    sess.add(job)
+    sess.commit()
+    sess.close()
     app.run(port=80)

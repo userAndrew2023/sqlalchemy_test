@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h3>Works log</h3>
+    <table>
+
+        <tr>
+            <td>ID</td>
+            <td>НАЗВАНИЕ</td>
+            <td>ТИМ ЛИД</td>
+            <td>ПРОДОЛЖИТЕЛЬНОСТЬ</td>
+            <td>ЗАВЕРШЕНА</td>
+        </tr>
+        {% for i in data %}
+            <tr>
+                <td>{{ i['id'] }}</td>
+                <td>{{ i['name'] }}</td>
+                <td>{{ i['team_leader'] }}</td>
+                <td>{{ i['duration'] }}</td>
+                <td>{{ i['is_finished'] }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+
+{% endblock %}
