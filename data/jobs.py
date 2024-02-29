@@ -1,6 +1,4 @@
-import datetime
 import sqlalchemy
-from sqlalchemy.orm import session
 
 from .db_session import SqlAlchemyBase
 

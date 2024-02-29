@@ -1,39 +1,47 @@
 from flask import Flask, render_template
+from werkzeug.utils import redirect
+
 from data import db_session
-from data.jobs import Jobs
+from data.users import User
+from register_form import RegisterForm
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'key'
 
 
 @app.route('/')
-def table():
-    db_s = db_session.create_session()
-    data = []
-    for i in db_s.query(Jobs):
-        data.append(
-            {
-                'id': i.id,
-                'name': i.job,
-                'team_leader': i.team_leader,
-                'duration': f'{i.work_size} hours',
-                'collaborators': i.collaborators,
-                'is_finished': 'yes' if i.is_finished else 'no'
-            }
+def index():
+    return render_template('base.html')
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegisterForm()
+    if form.validate_on_submit():
+        if form.password.data != form.password_again.data:
+            return render_template('register.html', title='Регистрация',
+                                   form=form,
+                                   message="Пароли не совпадают")
+        db_sess = db_session.create_session()
+        if db_sess.query(User).filter(User.email == form.email.data).first():
+            return render_template('register.html', title='Регистрация',
+                                   form=form,
+                                   message="Такой пользователь уже есть")
+        user = User(
+            name=form.name.data,
+            surname=form.surname.data,
+            position=form.position.data,
+            speciality=form.speciality.data,
+            address=form.address.data,
+            email=form.email.data
         )
-    return render_template('table.html', data=data)
+        user.set_password(form.password.data)
+        db_sess.add(user)
+        db_sess.commit()
+        return redirect('/')
+    return render_template('register.html', title='Регистрация', form=form)
 
 
 if __name__ == '__main__':
     db_session.global_init('db/init.db')
-    job = Jobs()
-    job.job = 'бот для шадрина'
-    job.collaborators = 'Андрей'
-    job.work_size = '15'
-    job.is_finished = False
-    job.team_leader = 'Женя'
-    sess = db_session.create_session()
-    sess.add(job)
-    sess.commit()
-    sess.close()
     app.run(port=80)
