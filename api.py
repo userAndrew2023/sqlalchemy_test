@@ -24,7 +24,9 @@ def get_jobs():
 
 @blueprint.route('/jobs/<id>')
 def get_job(id: int):
-    if id.__class__ != int:
+    try:
+        id = int(id)
+    except ValueError:
         return jsonify({
             'msg': 'wrong data, integer required'
         }), 400
