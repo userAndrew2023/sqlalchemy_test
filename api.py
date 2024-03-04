@@ -46,10 +46,12 @@ def get_job(id: int):
 def add_job():
     sess = db_session.create_session()
     data = request.json
-
-    job = Jobs(**data)
-    sess.add(job)
-    sess.commit()
+    try:
+        job = Jobs(**data)
+        sess.add(job)
+        sess.commit()
+    except Exception as e:
+        print(e)
 
     return jsonify({
         'msg': 'ok'
