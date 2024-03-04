@@ -60,6 +60,35 @@ def add_job():
     }), 200
 
 
+@blueprint.route('/jobs/<id>', methods=['POST'])
+def edit_job(id):
+    sess = db_session.create_session()
+    data = request.json
+
+    try:
+        id = int(id)
+    except ValueError:
+        return jsonify({
+            'msg': 'wrong data, integer required'
+        }), 400
+    if not sess.query(Jobs).get(id):
+        return jsonify({
+            'msg': 'not found'
+        }), 404
+
+    try:
+        job = Jobs(**data)
+        job.id = id
+        sess.merge(job)
+        sess.commit()
+    except Exception as e:
+        print(e)
+
+    return jsonify({
+        'msg': 'ok'
+    }), 200
+
+
 @blueprint.route('/jobs/<id>', methods=['DELETE'])
 def delete_job(id: int):
     try:
