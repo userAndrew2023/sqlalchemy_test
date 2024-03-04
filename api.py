@@ -60,7 +60,7 @@ def add_job():
     }), 200
 
 
-@blueprint.route('/jobs/<id>', methods=['POST'])
+@blueprint.route('/jobs/<id>', methods=['PUT'])
 def edit_job(id):
     sess = db_session.create_session()
     data = request.json
