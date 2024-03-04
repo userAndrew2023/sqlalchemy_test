@@ -1,14 +1,17 @@
 from flask import Flask, render_template
+from flask_login import LoginManager, login_user, login_required, logout_user
 from werkzeug.utils import redirect
 
+import api
 from data import db_session
 from data.users import User
 from login_form import LoginForm
 from register_form import RegisterForm
-from flask_login import LoginManager, login_user, login_required, logout_user
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'key'
+app.config['JSON_AS_ASCII'] = False
+
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -77,4 +80,6 @@ def logout():
 
 if __name__ == '__main__':
     db_session.global_init('db/init.db')
+
+    app.register_blueprint(api.blueprint)
     app.run(port=80)
