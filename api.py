@@ -1,5 +1,5 @@
 import flask
-from flask import jsonify
+from flask import jsonify, request
 
 from data import db_session
 from data.jobs import Jobs
@@ -41,3 +41,16 @@ def get_job(id: int):
         }
     ), 200
 
+
+@blueprint.route('/jobs', methods=['POST'])
+def add_job():
+    sess = db_session.create_session()
+    data = request.json
+
+    job = Jobs(**data)
+    sess.add(job)
+    sess.commit()
+
+    return jsonify({
+        'msg': 'ok'
+    }), 200

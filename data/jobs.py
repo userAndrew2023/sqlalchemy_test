@@ -13,3 +13,10 @@ class Jobs(SqlAlchemyBase, SerializerMixin):
     work_size = sqlalchemy.Column(sqlalchemy.Integer, nullable=True)
     collaborators = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     is_finished = sqlalchemy.Column(sqlalchemy.Boolean, nullable=True)
+
+    def __init__(self, team_leader=None, job=None, work_size=None, collaborators=None, **kwargs):
+        self.team_leader = team_leader
+        self.job = job
+        self.work_size = work_size
+        self.collaborators = collaborators
+        self.is_finished = False
